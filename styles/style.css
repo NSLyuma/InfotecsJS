@@ -1,0 +1,19 @@
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.content {
+  width: 50%;
+}
+
+.table {
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid black;
+}
+/*# sourceMappingURL=style.css.map */
