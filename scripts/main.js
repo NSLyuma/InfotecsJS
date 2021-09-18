@@ -517,28 +517,173 @@ for (let item = 0; item < jsonData.length; item++) {
     eyeColorArr.push(jsonData[item].eyeColor);
 }
 
-document.write("<div class=\"content\"><table class=\"table\">"); // открываю таблицу и главный div
+/**
+ * Функция для создания новых элементов DOM с классом
+ * @param {String} tag - тэг
+ * @param {String} elemClass - класс элемента (необязательный параметр)
+ * @returns возвращает новый элемент
+ */
+function createNewElem(tag, elemClass) {
+    let elem = document.createElement(tag);
+    elem.classList.add(elemClass);
+    return elem;
+}
 
-let table = document.querySelector(".table"); // нахожу элемент-таблицу
-let tr = document.createElement("tr"); // создаю элемент строку...
-table.appendChild(tr); // ...и добавляю его в таблицу
+/**
+ * Функция для создания строки заголовков таблицы
+ * @param {Element} table - таблица, в которую будет добавлена строка заголовков
+ * @param {Array} headers - массив с заголовками
+ */
+function createTableHeaders(table, headers) {
+    let tr = createNewElem("tr");
+    for (let i = 0; i < headers.length; i++) {
+        let th = createNewElem("th");
+        th.textContent = headers[i];
+        tr.appendChild(th);
+    }
+    table.appendChild(tr);
+}
+
+/**
+ * Функция для заполнения таблицы данными
+ * @param {Element} table - таблица, в которую добавляются данные
+ * @param {Number} rows - количество строк
+ * @param {Array} cols - количество столбцов
+ * @param {Array} dataArr - массив, из которого нужно брать данные
+ */
+function addDataToTable(table, rows, cols, dataArr) {
+    for (let i = 0; i < rows; i++) {
+        let tr = createNewElem("tr");
+        for (let j = 0; j < cols; j++) {
+            let td = createNewElem("td");
+            td.textContent = dataArr[j][i];
+            tr.appendChild(td);
+        }
+        table.appendChild(tr);
+    }
+}
+
+/**
+ * Функция для создания таблицы
+ * @param {String} parentSelector - класс родителя, в который будет добавлена таблица
+ * @param {String} tableSelector - класс таблицы
+ * @param {Array} headers - массив с заголовками
+ * @param {Number} rows - количество строк
+ * @param {Array} dataArr - массив, из которого нужно брать данные
+ */
+function createTable(parentSelector, tableSelector, headers, rows, dataArr) {
+    let parent = document.querySelector(parentSelector);
+    let table = document.querySelector(tableSelector);
+    parent.appendChild(table);
+
+    createTableHeaders(table, headers);
+
+    addDataToTable(table, rows, headers.length, dataArr);
+}
+
+function addPropToTable(thSelector, propTag, propClass) {
+    let thArr = document.querySelectorAll(thSelector);
+    console.log(thArr);
+    let prop = createNewElem(propTag, propClass);
+    console.log(prop);
+    for (let i = 0; i < thArr.length; i++) {
+        thArr[i].appendChild(prop);
+    }
+}
 
 let headersArr = ["Имя", "Фамилия", "Описание", "Цвет глаз"]; // массив с заголовками
+let cellsData = [fNameArr, lNameArr, aboutArr, eyeColorArr]; // массив с массивами данных для заполнения ячеек таблицы
+createTable(".container", ".table", headersArr, fNameArr.length, cellsData); // создаю таблицу
+addPropToTable("th", "a", "arrow");
 
-// в цикле создаю строку заголовков и добавляю их внутрь tr
-for (let h = 0; h < headersArr.length; h++) {
-    let th = document.createElement("th");
-    th.textContent = headersArr[h];
-    tr.appendChild(th);
-}
+// элемент стрелки для сортировки
+// let arrow = createNewElem("a", "arrow");
+// let thArr = document.querySelectorAll("th");
+// for (let th = 0; th < thArr.length; th++) {
+//     thArr[th].addEventListener("click", () => {
+//         thArr[th].appendChild(arrow);
+//     });
+// }
 
-// в цикле заполняю ячейки данными
-for (let i = 0; i < fNameArr.length; i++) {
-    document.write("<tr>"); // открываю строку
-    for (let j = 0; j < 1; j++) {
-        document.write(`<td>${fNameArr[i]}</td><td>${lNameArr[i]}</td><td>${aboutArr[i]}</td><td>${eyeColorArr[i]}</td>`); // добавляю в строку ячейки
-    }
-    document.write("</tr>") // закрываю строку
-}
 
-document.write("</table></div>") // закрываю таблицу и главный div
+// document.write("<table class=\"table\">"); // открываю таблицу
+
+//     let table = document.querySelector(".table"); // нахожу элемент-таблицу
+//     document.querySelector(".container").appendChild(table); // добавляю таблицу в контейнер
+//     let tr = createNewElem("tr"); //создаю элемент строку...
+//     table.appendChild(tr); // ...и добавляю его в таблицу
+
+//     let headersArr = ["Имя", "Фамилия", "Описание", "Цвет глаз"]; // массив с заголовками
+
+//     // в цикле создаю строку заголовков и добавляю их внутрь tr
+//     for (let h = 0; h < headersArr.length; h++) {
+//         let th = createNewElem("th");
+//         th.textContent = headersArr[h];
+//         tr.appendChild(th);
+//     }
+
+//     // элемент стрелки для сортировки
+//     let arrow = createNewElem("a", "arrow");
+//     let thArr = document.querySelectorAll("th");
+//     for (let th = 0; th < thArr.length; th++) {
+//         thArr[th].addEventListener("click", () => {
+//             thArr[th].appendChild(arrow);
+//         });
+//     }
+
+//     // в цикле заполняю ячейки данными
+//     for (let i = 0; i < fNameArr.length; i++) { // беру длину массива имён, т. к. длины всех массивов одинаковые
+//         document.write("<tr>"); // открываю строку
+//         for (let j = 0; j < 1; j++) {
+//             document.write(`<td>${fNameArr[i]}</td><td>${lNameArr[i]}</td><td class="about"><div>${aboutArr[i]}</div></td><td>${eyeColorArr[i]}</td>`); // добавляю в строку ячейки
+//         }
+//         document.write("</tr>") // закрываю строку
+//     }
+
+//     document.write("</table>") // закрываю таблицу
+// ------------------------------------
+
+// Создаю сортировку по заголовкам
+// ------------------------------------
+// let tbody = document.querySelector(".table tbody"); // нахожу элемент tbody
+// let rows = [...tbody.querySelectorAll("tr")]; // создаю массив из всех строк таблицы
+// let headers = [...document.querySelectorAll("th")]; // создаю массив из заголовков таблицы
+// let counter = 0;
+
+// // каждому заголовку по клику добавляю функцию сортировки
+// for (let header of headers) header.onclick = function () {
+//     let i = headers.indexOf(this); // текущий индекс массива заголовков
+//     if (counter === 0) {
+//         rows.sort((a, b) => a.cells[i].textContent.localeCompare(b.cells[i].textContent)); // сортировка строк
+//         for (let row of rows) tbody.appendChild(row); // перезапись строк в таблице
+//         arrow.innerHTML = "&#8595;"; // добавление стрелки для сортировки
+//         counter = 1; // смена числа счётчика для изменения порядка сортировки и направления стрелки
+//     } else {
+//         rows.sort((b, a) => a.cells[i].textContent.localeCompare(b.cells[i].textContent));
+//         for (let row of rows) tbody.appendChild(row);
+//         arrow.innerHTML = "&#8593;";
+//         counter = 0;
+//     }
+// }
+// ------------------------------------
+
+// Создаю форму редактирования
+// ------------------------------------
+// let editForm = document.querySelector(".edit-form"); // нахожу элемент формы редактирования
+// let editArea = document.querySelector(".edit-area"); // нахожу элемент textarea
+// let saveButton = document.querySelector(".save-btn"); // нахожу кнопку сохранения изменений
+// let currentCell; // создаю переменную для текущей ячейки
+
+// // по клику на нужную ячейку таблицы сохраняю в переменную currentCell эту ячейку
+// // также в текстовое поле выводится значение текущей ячейки
+// tbody.addEventListener("click", (event) => {
+//     editForm.classList.remove("hidden");
+//     currentCell = event.target;
+//     editArea.value = event.target.textContent
+// });
+
+// // по клику на кнопку перезаписываю содержимое ячейки на новое
+// saveButton.addEventListener("click", () => {
+//     currentCell.textContent = editArea.value;
+// });
+// ------------------------------------

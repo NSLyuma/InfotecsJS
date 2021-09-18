@@ -1,13 +1,69 @@
+$borderColor: cornflowerblue
+
 *
     margin: 0
     padding: 0
     box-sizing: border-box
 
-.content
+body
+    display: flex
+    align-items: flex-start
+
+.container
     width: 50%
 
 .table
     border-collapse: collapse
+    width: 100%
+
+th
+    height: 40px
 
 th, td
-    border: 1px solid black
+    border: 1px solid $borderColor
+    cursor: pointer
+    padding: 5px
+
+.about
+    & div
+        overflow: hidden
+        -webkit-line-clamp: 2
+        display: -webkit-box
+        -webkit-box-orient: vertical
+        word-break: break-word
+
+.arrow
+    margin-left: 5px
+
+.edit-form
+    width: 50%
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+
+.border
+    border: 1px solid $borderColor
+    border-radius: 10px
+    padding: 20px
+    margin-left: 20px
+    width: 70%
+
+.edit-area
+    min-height: 50px
+    margin-top: 10px
+    width: 100%
+
+.save-btn
+    margin-top: 10px
+    padding: 5px
+    cursor: pointer
+    border: 1px solid $borderColor
+    border-radius: 5px
+    background-color: #fff
+    &:hover
+        background-color: $borderColor + #4C3712
+    &:active
+        background-color: $borderColor
+
+.hidden
+    display: none
