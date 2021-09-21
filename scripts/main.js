@@ -520,12 +520,15 @@ for (let item = 0; item < jsonData.length; item++) {
 /**
  * Функция для создания новых элементов DOM с классом
  * @param {String} tag - тэг
- * @param {String} elemClass - класс элемента (необязательный параметр)
+ * @param {String} elemClass - класс элемента
  * @returns возвращает новый элемент
  */
 function createNewElem(tag, elemClass) {
     let elem = document.createElement(tag);
     elem.classList.add(elemClass);
+    if (elemClass === undefined) {
+        elem.classList.remove(elemClass);
+    }
     return elem;
 }
 
@@ -550,16 +553,37 @@ function createTableHeaders(table, headers) {
  * @param {Number} rows - количество строк
  * @param {Array} cols - количество столбцов
  * @param {Array} dataArr - массив, из которого нужно брать данные
+ * @param {Array} tdClass - массив классов для ячеек
  */
-function addDataToTable(table, rows, cols, dataArr) {
+function addDataToTable(table, rows, cols, dataArr, tdClass) {
+    let tbody = createNewElem("tbody");
+    table.appendChild(tbody);
     for (let i = 0; i < rows; i++) {
         let tr = createNewElem("tr");
         for (let j = 0; j < cols; j++) {
-            let td = createNewElem("td");
+            let td = createNewElem("td", tdClass[j]);
             td.textContent = dataArr[j][i];
             tr.appendChild(td);
         }
-        table.appendChild(tr);
+        tbody.appendChild(tr);
+    }
+}
+
+function addPagination(parentSelector, tableSelector, itemsOnPage) {
+    let container = createNewElem("div", "pagination");
+    document.querySelector(`${parentSelector}`).appendChild(container);
+    let tbody = document.querySelector(`${tableSelector} tbody`);
+    let rows = [...tbody.querySelectorAll("tr")];
+    let pages = rows.length / itemsOnPage;
+    let rowsOnPage = [];
+
+    for (let i = 1; i <= pages; i++) {
+        let page = createNewElem("button", "page");
+        page.textContent = i;
+        container.appendChild(page);
+        page.addEventListener("click", () => {
+            rowsOnPage = rows.slice(i * 10 - 10, i * 10);
+        });
     }
 }
 
@@ -578,112 +602,79 @@ function createTable(parentSelector, tableSelector, headers, rows, dataArr) {
 
     createTableHeaders(table, headers);
 
-    addDataToTable(table, rows, headers.length, dataArr);
+    addDataToTable(table, rows, headers.length, dataArr, tdClasses);
 }
 
-function addPropToTable(thSelector, propTag, propClass) {
-    let thArr = document.querySelectorAll(thSelector);
-    console.log(thArr);
-    let prop = createNewElem(propTag, propClass);
-    console.log(prop);
-    for (let i = 0; i < thArr.length; i++) {
-        thArr[i].appendChild(prop);
+/**
+ * Функция для сортировки таблицы с добавлением стрелок сортировки рядом с заголовками
+ * @param {String} tableSelector - класс таблицы, для которой нужно установить сортировку
+ */
+function sortTable(tableSelector) {
+    let tbody = document.querySelector(`${tableSelector} tbody`);
+    let rows = [...tbody.querySelectorAll("tr")];
+    let headers = [...document.querySelectorAll("th")];
+    let arrow = createNewElem("a", "arrow");
+    let counter = 0;
+
+    for (let header of headers) header.onclick = function () {
+        let i = headers.indexOf(this);
+        if (counter === 0) {
+            rows.sort((a, b) => a.cells[i].textContent.localeCompare(b.cells[i].textContent));
+            for (let row of rows) tbody.appendChild(row);
+            headers[i].appendChild(arrow);
+            arrow.innerHTML = "&#8595;";
+            counter = 1;
+        } else {
+            rows.sort((b, a) => a.cells[i].textContent.localeCompare(b.cells[i].textContent));
+            for (let row of rows) tbody.appendChild(row);
+            headers[i].appendChild(arrow);
+            arrow.innerHTML = "&#8593;";
+            counter = 0;
+        }
     }
+}
+
+/**
+ * Функция для создания формы редактирования таблицы; необходимо наличие блока с формой, содержащего textarea и кнопку
+ * @param {String} tableSelector - класс таблицы, для которой устанавливается форма редактирования
+ * @param {String} editFormSelector - класс блока формы редактирования
+ * @param {String} editAreaSelector - класс textarea
+ * @param {String} btnSelector - класс кнопки сохранения
+ */
+function createEditForm(tableSelector, editFormSelector, editAreaSelector, btnSelector) {
+    let editForm = document.querySelector(editFormSelector);
+    let editArea = document.querySelector(editAreaSelector);
+    let saveButton = document.querySelector(btnSelector);
+    let currentCell;
+
+    // по клику на нужную ячейку таблицы сохраняю в переменную currentCell эту ячейку
+    // также в текстовое поле выводится значение текущей ячейки
+    let tbody = document.querySelector(`${tableSelector} tbody`)
+    tbody.addEventListener("click", (event) => {
+        editForm.classList.remove("hidden");
+        currentCell = event.target;
+        editArea.value = event.target.textContent
+    });
+
+    // по клику на кнопку перезаписываю содержимое ячейки на новое
+    saveButton.addEventListener("click", () => {
+        currentCell.textContent = editArea.value;
+    });
 }
 
 let headersArr = ["Имя", "Фамилия", "Описание", "Цвет глаз"]; // массив с заголовками
 let cellsData = [fNameArr, lNameArr, aboutArr, eyeColorArr]; // массив с массивами данных для заполнения ячеек таблицы
+let tdClasses = [, , "about", ]; // массив классов ячеек; мне нужен был класс только для столбца с описанием, поэтому остальные я оставила пустыми
+
 createTable(".container", ".table", headersArr, fNameArr.length, cellsData); // создаю таблицу
-addPropToTable("th", "a", "arrow");
 
-// элемент стрелки для сортировки
-// let arrow = createNewElem("a", "arrow");
-// let thArr = document.querySelectorAll("th");
-// for (let th = 0; th < thArr.length; th++) {
-//     thArr[th].addEventListener("click", () => {
-//         thArr[th].appendChild(arrow);
-//     });
-// }
+// здесь я нахожу все ячейки с описанием, чтобы добавить каждую в блок div
+let aboutTd = [...document.querySelectorAll(".about")];
+for (let td = 0; td < aboutTd.length; td++) {
+    aboutTd[td].textContent = "";
+    aboutTd[td].insertAdjacentHTML("afterbegin", `<div>${aboutArr[td]}</div>`);
+}
 
-
-// document.write("<table class=\"table\">"); // открываю таблицу
-
-//     let table = document.querySelector(".table"); // нахожу элемент-таблицу
-//     document.querySelector(".container").appendChild(table); // добавляю таблицу в контейнер
-//     let tr = createNewElem("tr"); //создаю элемент строку...
-//     table.appendChild(tr); // ...и добавляю его в таблицу
-
-//     let headersArr = ["Имя", "Фамилия", "Описание", "Цвет глаз"]; // массив с заголовками
-
-//     // в цикле создаю строку заголовков и добавляю их внутрь tr
-//     for (let h = 0; h < headersArr.length; h++) {
-//         let th = createNewElem("th");
-//         th.textContent = headersArr[h];
-//         tr.appendChild(th);
-//     }
-
-//     // элемент стрелки для сортировки
-//     let arrow = createNewElem("a", "arrow");
-//     let thArr = document.querySelectorAll("th");
-//     for (let th = 0; th < thArr.length; th++) {
-//         thArr[th].addEventListener("click", () => {
-//             thArr[th].appendChild(arrow);
-//         });
-//     }
-
-//     // в цикле заполняю ячейки данными
-//     for (let i = 0; i < fNameArr.length; i++) { // беру длину массива имён, т. к. длины всех массивов одинаковые
-//         document.write("<tr>"); // открываю строку
-//         for (let j = 0; j < 1; j++) {
-//             document.write(`<td>${fNameArr[i]}</td><td>${lNameArr[i]}</td><td class="about"><div>${aboutArr[i]}</div></td><td>${eyeColorArr[i]}</td>`); // добавляю в строку ячейки
-//         }
-//         document.write("</tr>") // закрываю строку
-//     }
-
-//     document.write("</table>") // закрываю таблицу
-// ------------------------------------
-
-// Создаю сортировку по заголовкам
-// ------------------------------------
-// let tbody = document.querySelector(".table tbody"); // нахожу элемент tbody
-// let rows = [...tbody.querySelectorAll("tr")]; // создаю массив из всех строк таблицы
-// let headers = [...document.querySelectorAll("th")]; // создаю массив из заголовков таблицы
-// let counter = 0;
-
-// // каждому заголовку по клику добавляю функцию сортировки
-// for (let header of headers) header.onclick = function () {
-//     let i = headers.indexOf(this); // текущий индекс массива заголовков
-//     if (counter === 0) {
-//         rows.sort((a, b) => a.cells[i].textContent.localeCompare(b.cells[i].textContent)); // сортировка строк
-//         for (let row of rows) tbody.appendChild(row); // перезапись строк в таблице
-//         arrow.innerHTML = "&#8595;"; // добавление стрелки для сортировки
-//         counter = 1; // смена числа счётчика для изменения порядка сортировки и направления стрелки
-//     } else {
-//         rows.sort((b, a) => a.cells[i].textContent.localeCompare(b.cells[i].textContent));
-//         for (let row of rows) tbody.appendChild(row);
-//         arrow.innerHTML = "&#8593;";
-//         counter = 0;
-//     }
-// }
-// ------------------------------------
-
-// Создаю форму редактирования
-// ------------------------------------
-// let editForm = document.querySelector(".edit-form"); // нахожу элемент формы редактирования
-// let editArea = document.querySelector(".edit-area"); // нахожу элемент textarea
-// let saveButton = document.querySelector(".save-btn"); // нахожу кнопку сохранения изменений
-// let currentCell; // создаю переменную для текущей ячейки
-
-// // по клику на нужную ячейку таблицы сохраняю в переменную currentCell эту ячейку
-// // также в текстовое поле выводится значение текущей ячейки
-// tbody.addEventListener("click", (event) => {
-//     editForm.classList.remove("hidden");
-//     currentCell = event.target;
-//     editArea.value = event.target.textContent
-// });
-
-// // по клику на кнопку перезаписываю содержимое ячейки на новое
-// saveButton.addEventListener("click", () => {
-//     currentCell.textContent = editArea.value;
-// });
-// ------------------------------------
+sortTable(".table");
+createEditForm(".table", ".edit-form", ".edit-area", ".save-btn");
+addPagination(".container", ".table", 10);

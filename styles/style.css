@@ -70,27 +70,39 @@ th, td {
 .edit-area {
   min-height: 50px;
   margin-top: 10px;
-  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
+}
+
+button {
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #fff;
+  border: 1px solid cornflowerblue;
+}
+
+button:hover {
+  background-color: #b0ccff;
+}
+
+button:active {
+  background-color: cornflowerblue;
 }
 
 .save-btn {
   margin-top: 10px;
-  padding: 5px;
-  cursor: pointer;
-  border: 1px solid cornflowerblue;
-  border-radius: 5px;
-  background-color: #fff;
-}
-
-.save-btn:hover {
-  background-color: #b0ccff;
-}
-
-.save-btn:active {
-  background-color: cornflowerblue;
 }
 
 .hidden {
   display: none;
+}
+
+.pagination {
+  margin-top: 10px;
+}
+
+.page:not(:last-child) {
+  margin-right: 5px;
 }
 /*# sourceMappingURL=style.css.map */
