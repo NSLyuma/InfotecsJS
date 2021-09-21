@@ -570,6 +570,7 @@ function addDataToTable(table, rows, cols, dataArr, tdClass) {
 }
 
 function addPagination(parentSelector, tableSelector, itemsOnPage) {
+    let table = document.querySelector(".table");
     let container = createNewElem("div", "pagination");
     document.querySelector(`${parentSelector}`).appendChild(container);
     let tbody = document.querySelector(`${tableSelector} tbody`);
@@ -585,6 +586,8 @@ function addPagination(parentSelector, tableSelector, itemsOnPage) {
             rowsOnPage = rows.slice(i * 10 - 10, i * 10);
         });
     }
+
+    addDataToTable(table, pages, cols, dataArr, tdClass)
 }
 
 /**
