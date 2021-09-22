@@ -517,28 +517,162 @@ for (let item = 0; item < jsonData.length; item++) {
     eyeColorArr.push(jsonData[item].eyeColor);
 }
 
-document.write("<div class=\"content\"><table class=\"table\">"); // открываю таблицу и главный div
+/**
+ * Функция для создания новых элементов DOM с классом
+ * @param {String} tag - тэг
+ * @param {String} elemClass - класс элемента
+ * @returns возвращает новый элемент
+ */
+function createNewElem(tag, elemClass) {
+    const elem = document.createElement(tag);
+    elem.classList.add(elemClass);
+    if (elemClass === undefined) {
+        elem.classList.remove(elemClass);
+    }
+    return elem;
+}
 
-let table = document.querySelector(".table"); // нахожу элемент-таблицу
-let tr = document.createElement("tr"); // создаю элемент строку...
-table.appendChild(tr); // ...и добавляю его в таблицу
+/**
+ * Функция для создания строки заголовков таблицы
+ * @param {Element} table - таблица, в которую будет добавлена строка заголовков
+ * @param {Array} headers - массив с заголовками
+ */
+function createTableHeaders(table, headers) {
+    const tr = createNewElem("tr");
+    for (let i = 0; i < headers.length; i++) {
+        const th = createNewElem("th");
+        th.textContent = headers[i];
+        tr.appendChild(th);
+    }
+    table.appendChild(tr);
+}
+
+/**
+ * Функция для заполнения таблицы данными
+ * @param {Element} table - таблица, в которую добавляются данные
+ * @param {Number} rows - количество строк
+ * @param {Array} cols - количество столбцов
+ * @param {Array} dataArr - массив, из которого нужно брать данные
+ * @param {Array} tdClass - массив классов для ячеек
+ */
+function addDataToTable(table, rows, cols, dataArr, tdClass) {
+    const tbody = createNewElem("tbody");
+    table.appendChild(tbody);
+    for (let i = 0; i < rows; i++) {
+        const tr = createNewElem("tr");
+        for (let j = 0; j < cols; j++) {
+            const td = createNewElem("td", tdClass[j]);
+            td.textContent = dataArr[j][i];
+            tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+    }
+}
+
+/**
+ * Функция для создания таблицы
+ * @param {String} parentSelector - класс родителя, в который будет добавлена таблица
+ * @param {Array} headers - массив с заголовками
+ * @param {Number} rows - количество строк
+ * @param {Array} dataArr - массив, из которого нужно брать данные
+ */
+function createTable(parentSelector, headers, rows, dataArr) {
+    const parent = document.querySelector(parentSelector);
+    const table = createNewElem("table", "table");
+    parent.appendChild(table);
+
+    createTableHeaders(table, headers);
+
+    addDataToTable(table, rows, headers.length, dataArr, tdClasses);
+}
+
+/**
+ * Функция для сортировки таблицы с добавлением стрелок сортировки рядом с заголовками
+ * @param {String} tableSelector - класс таблицы, для которой нужно установить сортировку
+ */
+function sortTable(tableSelector) {
+    const tbody = document.querySelector(`${tableSelector} tbody`);
+    let rows = [...tbody.querySelectorAll("tr")];
+    let headers = [...document.querySelectorAll("th")];
+    const arrow = createNewElem("a", "arrow");
+    let counter = 0;
+
+    for (let header of headers) header.onclick = function () {
+        let i = headers.indexOf(this);
+        if (counter === 0) {
+            rows.sort((a, b) => a.cells[i].textContent.localeCompare(b.cells[i].textContent));
+            for (let row of rows) tbody.appendChild(row);
+            headers[i].appendChild(arrow);
+            arrow.innerHTML = "&#8595;";
+            counter = 1;
+        } else {
+            rows.sort((b, a) => a.cells[i].textContent.localeCompare(b.cells[i].textContent));
+            for (let row of rows) tbody.appendChild(row);
+            headers[i].appendChild(arrow);
+            arrow.innerHTML = "&#8593;";
+            counter = 0;
+        }
+    }
+}
+
+/**
+ * Функция для создания формы редактирования таблицы; необходимо наличие блока с формой
+ * @param {String} tableSelector - класс таблицы, для которой устанавливается форма редактирования
+ * @param {String} editFormSelector - класс блока формы редактирования
+ */
+function createEditForm(tableSelector, editFormSelector) {
+    const editForm = document.querySelector(editFormSelector);
+    const header = createNewElem("h4", "form-header");
+    header.textContent = "Edit form";
+    const editArea = createNewElem("textarea", "edit-area");
+    const btnsBlock = createNewElem("div", "btns");
+
+    const saveBtn = createNewElem("button", "save");
+    saveBtn.textContent = "Save";
+    const closeBtn = createNewElem("button", "close");
+    closeBtn.textContent = "Close";
+
+    editForm.appendChild(header);
+    editForm.appendChild(editArea);
+    editForm.appendChild(btnsBlock);
+
+    btnsBlock.appendChild(saveBtn);
+    btnsBlock.appendChild(closeBtn);
+
+    let currentCell;
+
+    // по клику на нужную ячейку таблицы сохраняю в переменную currentCell эту ячейку
+    // также в текстовое поле выводится значение текущей ячейки
+    const tbody = document.querySelector(`${tableSelector} tbody`)
+    tbody.addEventListener("click", (event) => {
+        editForm.classList.remove("hidden");
+        currentCell = event.target;
+        editArea.value = event.target.textContent
+    });
+
+    // по клику на кнопку перезаписываю содержимое ячейки на новое
+    saveBtn.addEventListener("click", () => {
+        currentCell.textContent = editArea.value;
+    });
+
+    // по клику на кнопку форма закрывается
+    closeBtn.addEventListener("click", () => {
+        editForm.classList.add("hidden");
+    })
+}
 
 let headersArr = ["Имя", "Фамилия", "Описание", "Цвет глаз"]; // массив с заголовками
+let cellsData = [fNameArr, lNameArr, aboutArr, eyeColorArr]; // массив с массивами данных для заполнения ячеек таблицы
+let tdClasses = [, , "about", ]; // массив классов ячеек; мне нужен был класс только для столбца с описанием, поэтому остальные я оставила пустыми
 
-// в цикле создаю строку заголовков и добавляю их внутрь tr
-for (let h = 0; h < headersArr.length; h++) {
-    let th = document.createElement("th");
-    th.textContent = headersArr[h];
-    tr.appendChild(th);
+createTable(".container", headersArr, fNameArr.length, cellsData); // создаю таблицу
+
+// здесь я нахожу все ячейки с описанием, чтобы добавить каждую в блок div
+let aboutTd = [...document.querySelectorAll(".about")];
+for (let td = 0; td < aboutTd.length; td++) {
+    aboutTd[td].textContent = "";
+    aboutTd[td].insertAdjacentHTML("afterbegin", `<div>${aboutArr[td]}</div>`);
 }
 
-// в цикле заполняю ячейки данными
-for (let i = 0; i < fNameArr.length; i++) {
-    document.write("<tr>"); // открываю строку
-    for (let j = 0; j < 1; j++) {
-        document.write(`<td>${fNameArr[i]}</td><td>${lNameArr[i]}</td><td>${aboutArr[i]}</td><td>${eyeColorArr[i]}</td>`); // добавляю в строку ячейки
-    }
-    document.write("</tr>") // закрываю строку
-}
-
-document.write("</table></div>") // закрываю таблицу и главный div
+sortTable(".table");
+createEditForm(".table", ".edit-form");

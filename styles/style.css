@@ -3,17 +3,152 @@
   padding: 0;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+  font-size: 16px;
 }
 
-.content {
+body {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+}
+
+.container {
   width: 50%;
 }
 
 .table {
   border-collapse: collapse;
+  width: 100%;
+}
+
+th {
+  height: 40px;
+}
+
+th:not(:nth-child(3)) {
+  min-width: 80px;
+}
+
+td {
+  max-width: 100px;
+  word-break: break-word;
 }
 
 th, td {
-  border: 1px solid black;
+  border: 1px solid cornflowerblue;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.about {
+  width: 60%;
+}
+
+.about div {
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+}
+
+.arrow {
+  margin-left: 5px;
+}
+
+.edit-form {
+  width: 40%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  border: 1px solid cornflowerblue;
+  border-radius: 10px;
+  padding: 20px;
+  margin-left: 20px;
+}
+
+.edit-area {
+  min-height: 50px;
+  margin: 10px 0;
+  min-width: 100%;
+  max-width: 100%;
+}
+
+button {
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #fff;
+  border: 1px solid cornflowerblue;
+}
+
+button:hover {
+  background-color: #b0ccff;
+}
+
+button:active {
+  background-color: cornflowerblue;
+}
+
+.btns {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.hidden {
+  display: none;
+}
+
+.pagination {
+  margin-top: 10px;
+}
+
+.page:not(:last-child) {
+  margin-right: 5px;
+}
+
+@media (max-width: 650px) {
+  * {
+    font-size: 12px;
+  }
+  th:not(:nth-child(3)) {
+    min-width: 60px;
+  }
+  td {
+    max-width: 60px;
+  }
+  th, td {
+    padding: 3px;
+  }
+}
+
+@media (max-width: 485px) {
+  * {
+    font-size: 10px;
+  }
+  th:not(:nth-child(3)) {
+    min-width: 40px;
+  }
+  td {
+    max-width: 40px;
+  }
+  th, td {
+    padding: 0;
+  }
 }
 /*# sourceMappingURL=style.css.map */
