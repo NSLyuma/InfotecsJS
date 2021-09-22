@@ -3,6 +3,7 @@
   padding: 0;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+  font-size: 16px;
 }
 
 body {
@@ -59,7 +60,7 @@ th, td {
 }
 
 .edit-form {
-  width: 50%;
+  width: 40%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -70,19 +71,15 @@ th, td {
   -webkit-box-align: start;
       -ms-flex-align: start;
           align-items: flex-start;
-}
-
-.border {
   border: 1px solid cornflowerblue;
   border-radius: 10px;
   padding: 20px;
   margin-left: 20px;
-  width: 70%;
 }
 
 .edit-area {
   min-height: 50px;
-  margin-top: 10px;
+  margin: 10px 0;
   min-width: 100%;
   max-width: 100%;
 }
@@ -103,8 +100,14 @@ button:active {
   background-color: cornflowerblue;
 }
 
-.save-btn {
-  margin-top: 10px;
+.btns {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 
 .hidden {
@@ -117,5 +120,35 @@ button:active {
 
 .page:not(:last-child) {
   margin-right: 5px;
+}
+
+@media (max-width: 650px) {
+  * {
+    font-size: 12px;
+  }
+  th:not(:nth-child(3)) {
+    min-width: 60px;
+  }
+  td {
+    max-width: 60px;
+  }
+  th, td {
+    padding: 3px;
+  }
+}
+
+@media (max-width: 485px) {
+  * {
+    font-size: 10px;
+  }
+  th:not(:nth-child(3)) {
+    min-width: 40px;
+  }
+  td {
+    max-width: 40px;
+  }
+  th, td {
+    padding: 0;
+  }
 }
 /*# sourceMappingURL=style.css.map */

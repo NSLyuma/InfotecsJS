@@ -621,12 +621,21 @@ function sortTable(tableSelector) {
  * @param {String} tableSelector - класс таблицы, для которой устанавливается форма редактирования
  * @param {String} editFormSelector - класс блока формы редактирования
  * @param {String} editAreaSelector - класс textarea
- * @param {String} btnSelector - класс кнопки сохранения
  */
-function createEditForm(tableSelector, editFormSelector, editAreaSelector, btnSelector) {
+function createEditForm(tableSelector, editFormSelector, editAreaSelector) {
     const editForm = document.querySelector(editFormSelector);
     const editArea = document.querySelector(editAreaSelector);
-    const saveButton = document.querySelector(btnSelector);
+    const btnsBlock = createNewElem("div", "btns");
+
+    const saveBtn = createNewElem("button", "save");
+    saveBtn.textContent = "Save";
+    const closeBtn = createNewElem("button", "close");
+    closeBtn.textContent = "Close";
+
+    editForm.appendChild(btnsBlock);
+    btnsBlock.appendChild(saveBtn);
+    btnsBlock.appendChild(closeBtn);
+
     let currentCell;
 
     // по клику на нужную ячейку таблицы сохраняю в переменную currentCell эту ячейку
@@ -639,9 +648,14 @@ function createEditForm(tableSelector, editFormSelector, editAreaSelector, btnSe
     });
 
     // по клику на кнопку перезаписываю содержимое ячейки на новое
-    saveButton.addEventListener("click", () => {
+    saveBtn.addEventListener("click", () => {
         currentCell.textContent = editArea.value;
     });
+
+    // по клику на кнопку форма закрывается
+    closeBtn.addEventListener("click", () => {
+        editForm.classList.add("hidden");
+    })
 }
 
 let headersArr = ["Имя", "Фамилия", "Описание", "Цвет глаз"]; // массив с заголовками
@@ -658,4 +672,4 @@ for (let td = 0; td < aboutTd.length; td++) {
 }
 
 sortTable(".table");
-createEditForm(".table", ".edit-form", ".edit-area", ".save-btn");
+createEditForm(".table", ".edit-form", ".edit-area");
