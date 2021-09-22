@@ -524,7 +524,7 @@ for (let item = 0; item < jsonData.length; item++) {
  * @returns возвращает новый элемент
  */
 function createNewElem(tag, elemClass) {
-    let elem = document.createElement(tag);
+    const elem = document.createElement(tag);
     elem.classList.add(elemClass);
     if (elemClass === undefined) {
         elem.classList.remove(elemClass);
@@ -538,9 +538,9 @@ function createNewElem(tag, elemClass) {
  * @param {Array} headers - массив с заголовками
  */
 function createTableHeaders(table, headers) {
-    let tr = createNewElem("tr");
+    const tr = createNewElem("tr");
     for (let i = 0; i < headers.length; i++) {
-        let th = createNewElem("th");
+        const th = createNewElem("th");
         th.textContent = headers[i];
         tr.appendChild(th);
     }
@@ -556,38 +556,17 @@ function createTableHeaders(table, headers) {
  * @param {Array} tdClass - массив классов для ячеек
  */
 function addDataToTable(table, rows, cols, dataArr, tdClass) {
-    let tbody = createNewElem("tbody");
+    const tbody = createNewElem("tbody");
     table.appendChild(tbody);
     for (let i = 0; i < rows; i++) {
-        let tr = createNewElem("tr");
+        const tr = createNewElem("tr");
         for (let j = 0; j < cols; j++) {
-            let td = createNewElem("td", tdClass[j]);
+            const td = createNewElem("td", tdClass[j]);
             td.textContent = dataArr[j][i];
             tr.appendChild(td);
         }
         tbody.appendChild(tr);
     }
-}
-
-function addPagination(parentSelector, tableSelector, itemsOnPage) {
-    let table = document.querySelector(".table");
-    let container = createNewElem("div", "pagination");
-    document.querySelector(`${parentSelector}`).appendChild(container);
-    let tbody = document.querySelector(`${tableSelector} tbody`);
-    let rows = [...tbody.querySelectorAll("tr")];
-    let pages = rows.length / itemsOnPage;
-    let rowsOnPage = [];
-
-    for (let i = 1; i <= pages; i++) {
-        let page = createNewElem("button", "page");
-        page.textContent = i;
-        container.appendChild(page);
-        page.addEventListener("click", () => {
-            rowsOnPage = rows.slice(i * 10 - 10, i * 10);
-        });
-    }
-
-    addDataToTable(table, pages, cols, dataArr, tdClass)
 }
 
 /**
@@ -599,8 +578,8 @@ function addPagination(parentSelector, tableSelector, itemsOnPage) {
  * @param {Array} dataArr - массив, из которого нужно брать данные
  */
 function createTable(parentSelector, tableSelector, headers, rows, dataArr) {
-    let parent = document.querySelector(parentSelector);
-    let table = document.querySelector(tableSelector);
+    const parent = document.querySelector(parentSelector);
+    const table = document.querySelector(tableSelector);
     parent.appendChild(table);
 
     createTableHeaders(table, headers);
@@ -613,10 +592,10 @@ function createTable(parentSelector, tableSelector, headers, rows, dataArr) {
  * @param {String} tableSelector - класс таблицы, для которой нужно установить сортировку
  */
 function sortTable(tableSelector) {
-    let tbody = document.querySelector(`${tableSelector} tbody`);
+    const tbody = document.querySelector(`${tableSelector} tbody`);
     let rows = [...tbody.querySelectorAll("tr")];
     let headers = [...document.querySelectorAll("th")];
-    let arrow = createNewElem("a", "arrow");
+    const arrow = createNewElem("a", "arrow");
     let counter = 0;
 
     for (let header of headers) header.onclick = function () {
@@ -645,14 +624,14 @@ function sortTable(tableSelector) {
  * @param {String} btnSelector - класс кнопки сохранения
  */
 function createEditForm(tableSelector, editFormSelector, editAreaSelector, btnSelector) {
-    let editForm = document.querySelector(editFormSelector);
-    let editArea = document.querySelector(editAreaSelector);
-    let saveButton = document.querySelector(btnSelector);
+    const editForm = document.querySelector(editFormSelector);
+    const editArea = document.querySelector(editAreaSelector);
+    const saveButton = document.querySelector(btnSelector);
     let currentCell;
 
     // по клику на нужную ячейку таблицы сохраняю в переменную currentCell эту ячейку
     // также в текстовое поле выводится значение текущей ячейки
-    let tbody = document.querySelector(`${tableSelector} tbody`)
+    const tbody = document.querySelector(`${tableSelector} tbody`)
     tbody.addEventListener("click", (event) => {
         editForm.classList.remove("hidden");
         currentCell = event.target;
@@ -680,4 +659,3 @@ for (let td = 0; td < aboutTd.length; td++) {
 
 sortTable(".table");
 createEditForm(".table", ".edit-form", ".edit-area", ".save-btn");
-addPagination(".container", ".table", 10);

@@ -27,10 +27,23 @@ th {
   height: 40px;
 }
 
+th:not(:nth-child(3)) {
+  min-width: 80px;
+}
+
+td {
+  max-width: 100px;
+  word-break: break-word;
+}
+
 th, td {
   border: 1px solid cornflowerblue;
   cursor: pointer;
   padding: 5px;
+}
+
+.about {
+  width: 60%;
 }
 
 .about div {
