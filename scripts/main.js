@@ -572,14 +572,13 @@ function addDataToTable(table, rows, cols, dataArr, tdClass) {
 /**
  * Функция для создания таблицы
  * @param {String} parentSelector - класс родителя, в который будет добавлена таблица
- * @param {String} tableSelector - класс таблицы
  * @param {Array} headers - массив с заголовками
  * @param {Number} rows - количество строк
  * @param {Array} dataArr - массив, из которого нужно брать данные
  */
-function createTable(parentSelector, tableSelector, headers, rows, dataArr) {
+function createTable(parentSelector, headers, rows, dataArr) {
     const parent = document.querySelector(parentSelector);
-    const table = document.querySelector(tableSelector);
+    const table = createNewElem("table", "table");
     parent.appendChild(table);
 
     createTableHeaders(table, headers);
@@ -666,7 +665,7 @@ let headersArr = ["Имя", "Фамилия", "Описание", "Цвет гл
 let cellsData = [fNameArr, lNameArr, aboutArr, eyeColorArr]; // массив с массивами данных для заполнения ячеек таблицы
 let tdClasses = [, , "about", ]; // массив классов ячеек; мне нужен был класс только для столбца с описанием, поэтому остальные я оставила пустыми
 
-createTable(".container", ".table", headersArr, fNameArr.length, cellsData); // создаю таблицу
+createTable(".container", headersArr, fNameArr.length, cellsData); // создаю таблицу
 
 // здесь я нахожу все ячейки с описанием, чтобы добавить каждую в блок div
 let aboutTd = [...document.querySelectorAll(".about")];
