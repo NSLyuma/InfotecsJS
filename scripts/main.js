@@ -617,14 +617,15 @@ function sortTable(tableSelector) {
 }
 
 /**
- * Функция для создания формы редактирования таблицы; необходимо наличие блока с формой, содержащего textarea и кнопку
+ * Функция для создания формы редактирования таблицы; необходимо наличие блока с формой
  * @param {String} tableSelector - класс таблицы, для которой устанавливается форма редактирования
  * @param {String} editFormSelector - класс блока формы редактирования
- * @param {String} editAreaSelector - класс textarea
  */
-function createEditForm(tableSelector, editFormSelector, editAreaSelector) {
+function createEditForm(tableSelector, editFormSelector) {
     const editForm = document.querySelector(editFormSelector);
-    const editArea = document.querySelector(editAreaSelector);
+    const header = createNewElem("h4", "form-header");
+    header.textContent = "Edit form";
+    const editArea = createNewElem("textarea", "edit-area");
     const btnsBlock = createNewElem("div", "btns");
 
     const saveBtn = createNewElem("button", "save");
@@ -632,7 +633,10 @@ function createEditForm(tableSelector, editFormSelector, editAreaSelector) {
     const closeBtn = createNewElem("button", "close");
     closeBtn.textContent = "Close";
 
+    editForm.appendChild(header);
+    editForm.appendChild(editArea);
     editForm.appendChild(btnsBlock);
+
     btnsBlock.appendChild(saveBtn);
     btnsBlock.appendChild(closeBtn);
 
@@ -672,4 +676,4 @@ for (let td = 0; td < aboutTd.length; td++) {
 }
 
 sortTable(".table");
-createEditForm(".table", ".edit-form", ".edit-area");
+createEditForm(".table", ".edit-form");
